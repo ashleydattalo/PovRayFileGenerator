@@ -1,0 +1,3 @@
+This is a Pov Ray File Generator. It creates a 'scene' and writes that data to a pov ray file. You can then use the generated file as input for the 473 raytracer project.
+
+In this folder, 'createdPovFile.cpp' is the pov file created. 'output.png' is the image rendered using the pov file
