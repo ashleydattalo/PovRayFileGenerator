@@ -56,7 +56,7 @@ void CreatePovFile::createExampleScene() {
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			Sphere *s = new Sphere();
-			s->center = glm::vec3(0.0f, 0.0f, 10.0f);
+			s->center = glm::vec3(0.0f, 0.0f, 20.0f);
 			s->radius = 5.0f;
 			transform.translate = glm::vec3(i*12.0f-12.0f, j*12.0f-12.0f, 0.0f);
 			s->pigment = pigment;
@@ -64,6 +64,26 @@ void CreatePovFile::createExampleScene() {
 			s->finish = finish;
 			scene.objects.push_back(s);
 		}		
+	}
+
+	ColorGradient colGrad;
+	colGrad.addColor(glm::vec3(1.0f, 0.0f, 0.0f));
+	colGrad.addColor(glm::vec3(0.0f, 0.0f, 1.0f));
+	colGrad.addColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	colGrad.done();
+
+	Spiral spiral;
+	spiral.tStart = -7;
+	spiral.tEnd = 5;
+	spiral.numObjects = 50;
+	spiral.radius = 3.0f;
+	spiral.colGrad = colGrad;
+	spiral.offset = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	std::vector<Object *> objectsInSpiral = spiral.getObjects();
+
+	for(Object *o : objectsInSpiral) {
+		scene.objects.push_back(o);
 	}
 }
 
