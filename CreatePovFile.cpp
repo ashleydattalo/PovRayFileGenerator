@@ -4,6 +4,7 @@ CreatePovFile::CreatePovFile(std::string povFileName) :
 	povFileName(povFileName)
 {
 	openFile(povFileName + ".pov");
+	
 	createExampleScene();
 	writeScene();
 
@@ -11,84 +12,61 @@ CreatePovFile::CreatePovFile(std::string povFileName) :
 
 }
 CreatePovFile::~CreatePovFile() {}
-void CreatePovFile::createExampleScene() {
-	setCamera();
-	setLightSources();
-	setPlanes();
-	setObjects();
-}
 
-void CreatePovFile::setCamera() {
+void CreatePovFile::createExampleScene() {
 	Camera camera;
-	camera.location = glm::vec3(0.0f, 0.0f,-15.0f);
+	camera.location = glm::vec3(0.0f, 0.0f,-25.0f);
 	camera.up = glm::vec3(0.0f,1.0f,0.0f);
 	camera.right = glm::vec3(1.333f, 0.0f, 0.0f);
 	camera.look_at = glm::vec3(0.0f, 0.0f, 0.0f);
 	scene.camera = camera;
-}
 
-void CreatePovFile::setLightSources() {
-	std::vector<LightSource> lightSources;
-	
 	LightSource ls;
-	ls.location = glm::vec3(10, 10, -10);
-	ls.color  = glm::vec3(3.5, 3.5, 3.5);
-	lightSources.push_back(ls);
+	ls.location = glm::vec3(20, 20, -15);
+	ls.color  = glm::vec3(2.5, 2.5, 2.5);
+	scene.lightSources.push_back(ls);
 
-	LightSource ls2;
-	ls2.location = glm::vec3(-10, 10, -10);
-	ls2.color  = glm::vec3(1.5, 1.5, 1.5);
-	lightSources.push_back(ls2);
-
-	scene.lightSources = lightSources;
-}
-
-void CreatePovFile::setPlanes() {
-	Pigment p;
-	Finish f;
-	Transform transform;
-	transform.scale = glm::vec3(1.0f);
-
-	//gound plane
+	// gound plane
 	Plane *plane = new Plane();
+	Pigment pigmentPlane;
+		pigmentPlane.color = glm::vec3(0.9f, 0.8f, 0.9f);
+	Transform transformPlane;
+		transformPlane.scale = glm::vec3(1.0f);
+	Finish finishPlane;
+		finishPlane.ambient = 0.3f;
+		finishPlane.diffuse = 0.5f;
+		finishPlane.reflection = 0.1f;
 	plane->normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	plane->distance = -12.0f;
-		p.color = glm::vec3(0.9f, 0.8f, 0.9f);
-	plane->pigment = p;
-	plane->transform = transform;
-		f.ambient = 0.3f;
-		f.diffuse = 0.5f;
-		f.reflection = 0.6f;
-	plane->finish = f;
+	plane->distance = -17.0f;
+	plane->pigment = pigmentPlane;
+	plane->transform = transformPlane;
+	plane->finish = finishPlane;
 	scene.objects.push_back(plane);
-}
 
-void CreatePovFile::setObjects() {
-	Pigment p;
-	p.color = glm::vec3(1.0f);
-
+	Pigment pigment;
+	pigment.filter = false;
+	pigment.color = glm::vec3(0.0f, 1.0f, 1.0f);
 	Transform transform;
 	transform.scale = glm::vec3(1.0f);
-
-	Finish f;
-	f.ambient = 0.2f;
-	f.diffuse = 0.4f;
-	f.reflection = 0.8f;
+	Finish finish;
+	finish.ambient = 0.2f;
+	finish.diffuse = 0.4f;
+	finish.reflection = 0.6f;
 
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
-			Box *s = new Box();
-			s->center = glm::vec3(0.0f, 0.0f, 25.0f);
+			Sphere *s = new Sphere();
+			s->center = glm::vec3(0.0f, 0.0f, 10.0f);
 			s->radius = 5.0f;
-			s->setPoints();
-			transform.translate = glm::vec3(i*15.0f-15.0f, j*15.0f-15.0f, 0.0f);
-			s->pigment = p;
+			transform.translate = glm::vec3(i*12.0f-12.0f, j*12.0f-12.0f, 0.0f);
+			s->pigment = pigment;
 			s->transform = transform;
-			s->finish = f;
+			s->finish = finish;
 			scene.objects.push_back(s);
 		}		
 	}
 }
+
 
 void CreatePovFile::writeScene() {
 	writeCamera(scene.camera);
@@ -122,7 +100,7 @@ void CreatePovFile::writeLightSources(std::vector<LightSource> lightSources) {
 
 void CreatePovFile::writeLightSource(LightSource ls) {
 	file << "\n";
-	file << "lightsource {";
+	file << "light_source {";
 	writeVec3(ls.location);
 	file << " color rgb ";
 	writeVec3(ls.color);
